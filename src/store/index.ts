@@ -18,64 +18,80 @@ interface Action {
   updateComponentProps: (componentId: number, props: object) => void;
 }
 
-export const useComponetsStore = create<State & Action>((set, get) => ({
-  components: [
-    {
-      id: 1,
-      name: 'Page',
-      props: {},
-      desc: '页面',
-    },
-  ],
-  addComponent: (component, parentId) =>
-    set((state) => {
-      if (parentId) {
-        const parentComponent = getComponentById(parentId, state.components);
+const resetFns = new Set<() => void>();
 
-        if (parentComponent) {
-          if (parentComponent.children) {
-            parentComponent.children.push(component);
-          } else {
-            parentComponent.children = [component];
+export const resetStore = () => {
+  resetFns.forEach((resetFn) => {
+    resetFn();
+  });
+};
+
+const initComponent = {
+  id: 1,
+  name: 'Page',
+  props: {},
+  desc: '页面',
+};
+
+export const useComponetsStore = create<State & Action>((set, get) => {
+  resetFns.add(() => set({ components: [{ ...initComponent }] }));
+  return {
+    components: [{ ...initComponent }],
+    addComponent: (component, parentId) =>
+      set((state) => {
+        if (parentId) {
+          const parentComponent = getComponentById(parentId, state.components);
+
+          if (parentComponent) {
+            if (parentComponent.children) {
+              parentComponent.children.push(component);
+            } else {
+              parentComponent.children = [component];
+            }
           }
+
+          component.parentId = parentId;
+          return { components: [...state.components] };
         }
+        return { components: [...state.components, component] };
+      }),
+    deleteComponent: (componentId) => {
+      if (!componentId) return;
 
-        component.parentId = parentId;
-        return { components: [...state.components] };
-      }
-      return { components: [...state.components, component] };
-    }),
-  deleteComponent: (componentId) => {
-    if (!componentId) return;
-
-    const component = getComponentById(componentId, get().components);
-    if (component?.parentId) {
-      const parentComponent = getComponentById(
-        component.parentId,
-        get().components,
-      );
-
-      if (parentComponent) {
-        parentComponent.children = parentComponent?.children?.filter(
-          (item) => item.id !== +componentId,
+      const component = getComponentById(componentId, get().components);
+      // console.log(component);
+      if (component?.parentId) {
+        const parentComponent = getComponentById(
+          component.parentId,
+          get().components,
         );
 
-        set({ components: [...get().components] });
+        if (parentComponent) {
+          parentComponent.children = parentComponent?.children?.filter(
+            (item) => item.id !== +componentId,
+          );
+
+          set({ components: [...get().components] });
+        }
+      } else {
+        set({
+          components: [...get().components.filter((c) => c.id !== componentId)],
+        });
       }
-    }
-  },
-  updateComponentProps: (componentId, props) =>
-    set((state) => {
-      const component = getComponentById(componentId, state.components);
-      if (component) {
-        component.props = { ...component.props, ...props };
+    },
+    updateComponentProps: (componentId, props) =>
+      set((state) => {
+        const component = getComponentById(componentId, state.components);
+        if (component) {
+          component.props = { ...component.props, ...props };
+
+          return { components: [...state.components] };
+        }
 
         return { components: [...state.components] };
-      }
-
-      return { components: [...state.components] };
-    }),
-}));
+      }),
+  };
+});
 
 export function getComponentById(
   id: number | null,
@@ -84,7 +100,7 @@ export function getComponentById(
   if (!id) return null;
 
   for (const component of components) {
-    if (component.id == id) return component;
+    if (component.id === id) return component;
     if (component.children && component.children.length > 0) {
       const result = getComponentById(id, component.children);
       if (result !== null) return result;
