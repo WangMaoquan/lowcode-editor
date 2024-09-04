@@ -2,7 +2,7 @@ import { act, render, screen } from '@testing-library/react';
 import { describe, it, expect, beforeEach } from 'vitest';
 import userEvent, { UserEvent } from '@testing-library/user-event';
 import { TestDemo } from './demo';
-import { Component, resetStore } from '..';
+import { Component, getComponentById, resetStore } from '..';
 import { resetId } from './utils';
 const components: Component[] = [];
 const renderDemo = () => {
@@ -83,5 +83,28 @@ describe('useComponentsStore', () => {
 
     await doClick(user, 'del-test2');
     expect(components.length).toBe(1);
+  });
+
+  it('updateComponentProps', async () => {
+    const user = userEvent.setup();
+    renderDemo();
+    // name test2 id 2
+    await doClick(user, 'add-no-parentid');
+    // name test3
+    await doClick(user, 'add-no-parentid');
+    // name test4
+    await doClick(user, 'add-has-parentid');
+
+    await doClick(user, 'update-test3');
+    const component3 = getComponentById(3, components);
+    expect(component3?.props).toEqual({ className: 'cls3' });
+
+    await doClick(user, 'update-test4');
+    const component4 = getComponentById(4, components);
+    expect(component4?.props).toEqual({ className: 'cls4' });
+
+    await doClick(user, 'update-test2');
+    const component2 = getComponentById(2, components);
+    expect(component2?.props).toEqual({ className: 'cls2' });
   });
 });
