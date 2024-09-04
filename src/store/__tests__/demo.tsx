@@ -1,15 +1,16 @@
 import { useEffect } from 'react';
 import { Component, useComponetsStore } from '..';
-
-let id = 1;
+import { idAdd } from './utils';
 
 export function TestDemo({ states }: { states: Component[] }) {
-  const { components, addComponent, deleteComponent } = useComponetsStore();
+  const { components, addComponent, deleteComponent, updateComponentProps } =
+    useComponetsStore();
 
   // no parentid
   const add = () => {
+    const id = idAdd();
     addComponent({
-      id: ++id,
+      id,
       name: 'test' + id,
       props: {},
     });
@@ -17,9 +18,10 @@ export function TestDemo({ states }: { states: Component[] }) {
 
   // has parentId
   const add2 = () => {
+    const id = idAdd();
     addComponent(
       {
-        id: ++id,
+        id,
         name: 'test' + id,
         props: {},
       },
@@ -31,10 +33,18 @@ export function TestDemo({ states }: { states: Component[] }) {
     deleteComponent(id);
   };
 
+  const update = (id: number) => {
+    const props = {
+      className: 'cls' + id,
+    };
+    updateComponentProps(id, props);
+  };
+
   const renderData = (data: Component[]) => {
     return data.map((c) => (
       <div key={c.id}>
-        <button onClick={() => del(c.id)}>{c.name}</button>
+        <button onClick={() => del(c.id)}>{`del-${c.name}`}</button>
+        <button onClick={() => update(c.id)}>{`update-${c.name}`}</button>
         {c.children && c.children.length !== 0 && renderData(c.children)}
       </div>
     ));

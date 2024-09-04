@@ -3,6 +3,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import userEvent, { UserEvent } from '@testing-library/user-event';
 import { TestDemo } from './demo';
 import { Component, resetStore } from '..';
+import { resetId } from './utils';
 const components: Component[] = [];
 const renderDemo = () => {
   return render(<TestDemo states={components} />);
@@ -17,6 +18,7 @@ const doClick = async (user: UserEvent, name: string) => {
 beforeEach(() => {
   components.length = 0;
   resetStore();
+  resetId();
 });
 
 describe('useComponentsStore', () => {
@@ -55,31 +57,31 @@ describe('useComponentsStore', () => {
     expect(children.length).toBe(1);
 
     expect(children).toEqual([
-      { id: 3, name: 'test3', props: {}, parentId: 1 },
+      { id: 2, name: 'test2', props: {}, parentId: 1 },
     ]);
   });
 
   it('deleteComponent', async () => {
     const user = userEvent.setup();
     renderDemo();
-    // name test4 id 4
+    // name test2 id 2
     await doClick(user, 'add-no-parentid');
-    // name test5
+    // name test3
     await doClick(user, 'add-no-parentid');
-    // name test6
+    // name test4
     await doClick(user, 'add-has-parentid');
 
     expect(components.length).toBe(3);
 
-    await doClick(user, 'test5');
+    await doClick(user, 'del-test3');
     expect(components.length).toBe(2);
     expect(components[0].children?.length).toBe(1);
 
-    await doClick(user, 'test6');
+    await doClick(user, 'del-test4');
     expect(components.length).toBe(2);
     expect(components[0].children?.length).toBe(0);
 
-    await doClick(user, 'test4');
+    await doClick(user, 'del-test2');
     expect(components.length).toBe(1);
   });
 });
