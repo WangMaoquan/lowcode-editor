@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import Container from '../../materials/Container';
 import Button from '../../materials/Botton';
-import Page from '../../component/Page';
+import Page from '../../materials/Page';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface ComponentConfig {

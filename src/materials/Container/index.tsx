@@ -6,6 +6,7 @@ const Container = ({ id, children }: CommonComponentProps) => {
   return (
     <div
       ref={drop}
+      data-component-id={id}
       className={`border border-black min-h-25 p-5 ${
         canDrop ? 'border-2 border-solid border-blue-400' : ''
       }`}
