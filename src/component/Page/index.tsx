@@ -1,9 +1,9 @@
 import { useDrop } from 'react-dnd';
-import { CommonComponentProps } from '../../../types';
-import { useComponentConfigStore } from '../../stores/useComponentsConfigStore';
 import { useComponetsStore } from '../../stores/useComponetsStore';
+import { useComponentConfigStore } from '../../stores/useComponentsConfigStore';
+import { CommonComponentProps } from '../../../types';
 
-const Container = ({ id, children }: CommonComponentProps) => {
+function Page({ id, children }: CommonComponentProps) {
   const { addComponent } = useComponetsStore();
   const { componentConfig } = useComponentConfigStore();
 
@@ -16,6 +16,7 @@ const Container = ({ id, children }: CommonComponentProps) => {
       }
 
       const props = componentConfig[item.type].defaultProps;
+      console.log(id);
 
       addComponent(
         {
@@ -33,13 +34,13 @@ const Container = ({ id, children }: CommonComponentProps) => {
   return (
     <div
       ref={drop}
-      className={`border border-black min-h-25 p-5 ${
+      className={`p-5 h-full box-border ${
         canDrop ? 'border-2 border-solid border-blue-400' : ''
       }`}
     >
       {children}
     </div>
   );
-};
+}
 
-export default Container;
+export default Page;
