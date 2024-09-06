@@ -29,6 +29,18 @@ export function TestDemo({ states }: { states: Component[] }) {
     );
   };
 
+  // same component
+  const add3 = () => {
+    addComponent(
+      {
+        id: 100,
+        name: 'test',
+        props: {},
+      },
+      1,
+    );
+  };
+
   const del = (id: number) => {
     deleteComponent(id);
   };
@@ -60,6 +72,7 @@ export function TestDemo({ states }: { states: Component[] }) {
       <p>test-demo</p>
       <button onClick={add}>add-no-parentid</button>
       <button onClick={add2}>add-has-parentid</button>
+      <button onClick={add3}>add-same-component</button>
       {renderData(components)}
     </div>
   );

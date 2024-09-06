@@ -107,4 +107,22 @@ describe('useComponentsStore', () => {
     const component2 = getComponentById(2, components);
     expect(component2?.props).toEqual({ className: 'cls2' });
   });
+
+  it('addComponent add same component', async () => {
+    const user = userEvent.setup();
+    renderDemo();
+    await doClick(user, 'add-same-component');
+    expect(components.length).toBe(1);
+
+    // add two
+    await doClick(user, 'add-same-component');
+    expect(components.length).toBe(1);
+
+    const children = components[0].children || [];
+    expect(children.length).toBe(1);
+
+    expect(children).toEqual([
+      { id: 100, name: 'test', props: {}, parentId: 1 },
+    ]);
+  });
 });

@@ -41,6 +41,14 @@ export const useComponetsStore = create<State & Action>((set, get) => {
       set((state) => {
         if (parentId) {
           const parentComponent = getComponentById(parentId, state.components);
+          if (parentComponent) {
+            const c = parentComponent.children?.filter(
+              (c) => c.id === component.id,
+            )[0];
+            if (c) {
+              return { components: get().components };
+            }
+          }
 
           if (parentComponent) {
             if (parentComponent.children) {
