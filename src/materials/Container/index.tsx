@@ -1,35 +1,8 @@
-import { useDrop } from 'react-dnd';
 import { CommonComponentProps } from '../../../types';
-import { useComponentConfigStore } from '../../stores/useComponentsConfigStore';
-import { useComponetsStore } from '../../stores/useComponetsStore';
+import { useMaterailDrop } from '../../hooks/useMaterailDrop';
 
 const Container = ({ id, children }: CommonComponentProps) => {
-  const { addComponent } = useComponetsStore();
-  const { componentConfig } = useComponentConfigStore();
-
-  const [{ canDrop }, drop] = useDrop(() => ({
-    accept: ['Button', 'Container'],
-    drop: (item: { type: string }, monitor) => {
-      const didDrop = monitor.didDrop();
-      if (didDrop) {
-        return;
-      }
-
-      const props = componentConfig[item.type].defaultProps;
-
-      addComponent(
-        {
-          id: new Date().getTime(),
-          name: item.type,
-          props,
-        },
-        id,
-      );
-    },
-    collect: (monitor) => ({
-      canDrop: monitor.canDrop(),
-    }),
-  }));
+  const { canDrop, drop } = useMaterailDrop(['Button', 'Container'], id);
   return (
     <div
       ref={drop}
