@@ -10,12 +10,15 @@ export interface Component {
 
 interface State {
   components: Component[];
+  curComponentId?: number | null;
+  curComponent?: Component | null;
 }
 
 interface Action {
   addComponent: (component: Component, parentId?: number) => void;
   deleteComponent: (componentId: number) => void;
   updateComponentProps: (componentId: number, props: object) => void;
+  setCurComponent: (componentId: number | null) => void;
 }
 
 const resetFns = new Set<() => void>();
@@ -36,6 +39,8 @@ const initComponent = {
 export const useComponetsStore = create<State & Action>((set, get) => {
   resetFns.add(() => set({ components: [{ ...initComponent }] }));
   return {
+    curComponent: null,
+    curComponentId: null,
     components: [{ ...initComponent }],
     addComponent: (component, parentId) =>
       set((state) => {
@@ -98,6 +103,11 @@ export const useComponetsStore = create<State & Action>((set, get) => {
 
         return { components: [...state.components] };
       }),
+    setCurComponent: (componentId) =>
+      set((state) => ({
+        curComponentId: componentId,
+        curComponent: getComponentById(componentId, state.components),
+      })),
   };
 });
 
