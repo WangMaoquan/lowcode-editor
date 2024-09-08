@@ -18,7 +18,7 @@ interface Action {
   addComponent: (component: Component, parentId?: number) => void;
   deleteComponent: (componentId: number) => void;
   updateComponentProps: (componentId: number, props: object) => void;
-  setCurComponent: (componentId: number | null) => void;
+  setCurComponentId: (componentId: number | null) => void;
 }
 
 const resetFns = new Set<() => void>();
@@ -103,7 +103,7 @@ export const useComponetsStore = create<State & Action>((set, get) => {
 
         return { components: [...state.components] };
       }),
-    setCurComponent: (componentId) =>
+    setCurComponentId: (componentId) =>
       set((state) => ({
         curComponentId: componentId,
         curComponent: getComponentById(componentId, state.components),
