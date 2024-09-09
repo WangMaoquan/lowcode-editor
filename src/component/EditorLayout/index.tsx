@@ -1,9 +1,9 @@
 import { Allotment } from 'allotment';
 import 'allotment/dist/style.css';
 import { Header } from '../Header';
-import { MaterialArea } from '../MaterialArea';
 import { EditArea } from '../EditArea';
 import { SettingArea } from '../SettingArea';
+import { MaterialWrapper } from '../MaterialArea/MaterialWrapper';
 
 export function EditorLayout() {
   return (
@@ -11,7 +11,7 @@ export function EditorLayout() {
       <Header />
       <Allotment>
         <Allotment.Pane preferredSize={240} maxSize={300} minSize={200}>
-          <MaterialArea />
+          <MaterialWrapper />
         </Allotment.Pane>
         <Allotment.Pane>
           <EditArea />
