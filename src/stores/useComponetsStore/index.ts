@@ -6,6 +6,7 @@ export interface Component {
   props: object;
   children?: Component[];
   parentId?: number;
+  desc: string;
 }
 
 interface State {

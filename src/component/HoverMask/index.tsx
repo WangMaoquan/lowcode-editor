@@ -73,6 +73,17 @@ function HoverMask({
     return getComponentById(componentId, components);
   }, [componentId]);
 
+  // 窗口缩放
+  useEffect(() => {
+    const resizeHandler = () => {
+      updatePosition();
+    };
+    window.addEventListener('resize', resizeHandler);
+    return () => {
+      window.removeEventListener('resize', resizeHandler);
+    };
+  }, []);
+
   return createPortal(
     <>
       <div
@@ -95,7 +106,7 @@ function HoverMask({
         }}
       >
         <div className="rounded-[0.25rem] text-white cursor-pointer whitespace-nowrap py-0 px-2">
-          {curComponent?.name || 'template'}
+          {curComponent?.desc}
         </div>
       </div>
     </>,

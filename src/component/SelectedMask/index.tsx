@@ -95,6 +95,17 @@ function SelectedMask({
     return parentComponents;
   }, [curComponent]);
 
+  // 窗口缩放
+  useEffect(() => {
+    const resizeHandler = () => {
+      updatePosition();
+    };
+    window.addEventListener('resize', resizeHandler);
+    return () => {
+      window.removeEventListener('resize', resizeHandler);
+    };
+  }, []);
+
   return createPortal(
     <>
       <div
@@ -132,7 +143,7 @@ function SelectedMask({
               className="rounded-[0.25rem] px-2 text-white cursor-pointer whitespace-nowrap"
               style={{ backgroundColor: 'blue' }}
             >
-              {curComponent?.name}
+              {curComponent?.desc}
             </div>
           </Dropdown>
           {/* 不能删除page */}
