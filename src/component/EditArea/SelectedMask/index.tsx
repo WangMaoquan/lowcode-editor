@@ -6,6 +6,7 @@ import {
 } from '../../../stores/useComponetsStore';
 import { Dropdown, Popconfirm, Space } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
+import { delay } from 'lodash-es';
 
 interface SelectedMaskProps {
   portalWrapperClassName: string;
@@ -79,7 +80,8 @@ function SelectedMask({
 
   // 处理删除后 高度问题
   useEffect(() => {
-    updatePosition();
+    // 修改样式后也要修改mask
+    delay(() => updatePosition(), 200);
   }, [components]);
 
   // 获取父辈级component
