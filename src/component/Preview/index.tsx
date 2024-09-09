@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { Component, useComponetsStore } from '../../stores/useComponetsStore';
 import { useComponentConfigStore } from '../../stores/useComponentsConfigStore';
@@ -23,10 +24,32 @@ export function Preview() {
           styles: component.styles,
           ...config.defaultProps,
           ...component.props,
+          ...handleEvent(component),
         },
         renderComponents(component.children || []),
       );
     });
+  }
+
+  function handleEvent(component: Component) {
+    const props: Record<string, any> = {};
+
+    componentConfig[component.name].events?.forEach((event) => {
+      const eventConfig = component.props[event.name];
+
+      // 定义了事件
+      if (eventConfig) {
+        const { type } = eventConfig;
+
+        // props["onClick"] = () => {/** todo */}
+        props[event.name] = () => {
+          if (type === 'goToLink' && eventConfig.url) {
+            window.location.href = eventConfig.url;
+          }
+        };
+      }
+    });
+    return props;
   }
 
   return <div>{renderComponents(components)}</div>;

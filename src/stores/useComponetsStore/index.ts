@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { CSSProperties } from 'react';
 import { create } from 'zustand';
 
 export interface Component {
   id: number;
   name: string;
-  props: object;
+  props: Record<string, any>;
   children?: Component[];
   parentId?: number;
   desc: string;
@@ -23,7 +24,10 @@ interface State {
 interface Action {
   addComponent: (component: Component, parentId?: number) => void;
   deleteComponent: (componentId: number) => void;
-  updateComponentProps: (componentId: number, props: object) => void;
+  updateComponentProps: (
+    componentId: number,
+    props: Record<string, any>,
+  ) => void;
   setCurComponentId: (componentId: number | null) => void;
   updateComponentStyles: (componentId: number, styles: CSSProperties) => void;
   setMode: (mode: Mode) => void;
