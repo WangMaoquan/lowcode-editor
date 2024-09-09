@@ -15,7 +15,7 @@ export function MaterialWrapper() {
         block
         options={['物料', '大纲', '源码']}
       />
-      <div className="pt-[20px]">
+      <div className="pt-[20px] h-[calc(100vh-6.895rem)]">
         {key === '物料' && <MaterialArea />}
         {key === '大纲' && <Outline />}
         {key === '源码' && <Source />}
