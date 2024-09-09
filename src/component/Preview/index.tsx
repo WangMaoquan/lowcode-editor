@@ -3,6 +3,8 @@ import React from 'react';
 import { Component, useComponetsStore } from '../../stores/useComponetsStore';
 import { useComponentConfigStore } from '../../stores/useComponentsConfigStore';
 import { message } from 'antd';
+import { GoToLinkConfig } from '../SettingArea/ComponentEvent/actions/GoToLink';
+import { ShowMessageConfig } from '../SettingArea/ComponentEvent/actions/ShowMessage';
 
 export function Preview() {
   const { components } = useComponetsStore();
@@ -40,19 +42,20 @@ export function Preview() {
 
       // 定义了事件
       if (eventConfig) {
-        const { type } = eventConfig;
-
-        // props["onClick"] = () => {/** todo */}
         props[event.name] = () => {
-          if (type === 'goToLink' && eventConfig.url) {
-            window.location.href = eventConfig.url;
-          } else if (type === 'showMessage' && eventConfig.config) {
-            if (eventConfig.config.type === 'success') {
-              message.success(eventConfig.config.text);
-            } else if (eventConfig.config.type === 'error') {
-              message.error(eventConfig.config.text);
-            }
-          }
+          eventConfig?.actions?.forEach(
+            (action: GoToLinkConfig | ShowMessageConfig) => {
+              if (action.type === 'goToLink') {
+                window.location.href = action.url;
+              } else if (action.type === 'showMessage') {
+                if (action.config.type === 'success') {
+                  message.success(action.config.text);
+                } else if (action.config.type === 'error') {
+                  message.error(action.config.text);
+                }
+              }
+            },
+          );
         };
       }
     });

@@ -1,21 +1,31 @@
 import { Input } from 'antd';
 import { useComponetsStore } from '../../../../../stores/useComponetsStore';
-import { ComponentEvent } from '../../../../../stores/useComponentsConfigStore';
+import { useState } from 'react';
 
-export function GoToLink(props: { event: ComponentEvent }) {
-  const { event } = props;
+export interface GoToLinkConfig {
+  type: 'goToLink';
+  url: string;
+}
 
-  const { curComponentId, curComponent, updateComponentProps } =
-    useComponetsStore();
+export interface GoToLinkProps {
+  defaultValue?: string;
+  onChange?: (config: GoToLinkConfig) => void;
+}
 
-  function urlChange(eventName: string, value: string) {
+export function GoToLink(props: GoToLinkProps) {
+  const { defaultValue, onChange } = props;
+
+  const { curComponentId } = useComponetsStore();
+  const [value, setValue] = useState(defaultValue);
+
+  function urlChange(value: string) {
     if (!curComponentId) return;
 
-    updateComponentProps(curComponentId, {
-      [eventName]: {
-        ...curComponent?.props?.[eventName],
-        url: value,
-      },
+    setValue(value);
+
+    onChange?.({
+      type: 'goToLink',
+      url: value,
     });
   }
 
@@ -24,11 +34,13 @@ export function GoToLink(props: { event: ComponentEvent }) {
       <div className="flex items-center gap-[0.625rem]">
         <div className="text-nowrap">链接:</div>
         <div>
-          <Input
+          <Input.TextArea
+            style={{ height: '12.5rem' }}
+            className="w-[31.25rem] border border-black"
             onChange={(e) => {
-              urlChange(event.name, e.target.value);
+              urlChange(e.target.value);
             }}
-            value={curComponent?.props?.[event.name]?.url}
+            value={value || ''}
           />
         </div>
       </div>

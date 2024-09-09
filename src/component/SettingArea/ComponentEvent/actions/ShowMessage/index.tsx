@@ -1,37 +1,56 @@
 import { Input, Select } from 'antd';
-import { ComponentEvent } from '../../../../../stores/useComponentsConfigStore';
 import { useComponetsStore } from '../../../../../stores/useComponetsStore';
+import { useState } from 'react';
 
-export function ShowMessage(props: { event: ComponentEvent }) {
-  const { event } = props;
+export interface ShowMessageConfig {
+  type: 'showMessage';
+  config: {
+    type: 'success' | 'error';
+    text: string;
+  };
+}
 
-  const { curComponentId, curComponent, updateComponentProps } =
-    useComponetsStore();
+export interface ShowMessageProps {
+  value?: ShowMessageConfig['config'];
+  onChange?: (config: ShowMessageConfig) => void;
+}
 
-  function messageTypeChange(eventName: string, value: string) {
+export function ShowMessage(props: ShowMessageProps) {
+  const { value, onChange } = props;
+
+  const { curComponentId } = useComponetsStore();
+
+  const [type, setType] = useState<'success' | 'error'>(
+    value?.type || 'success',
+  );
+  const [text, setText] = useState<string>(value?.text || '');
+
+  function messageTypeChange(value: 'error' | 'success') {
     if (!curComponentId) return;
 
-    updateComponentProps(curComponentId, {
-      [eventName]: {
-        ...curComponent?.props?.[eventName],
-        config: {
-          ...curComponent?.props?.[eventName]?.config,
-          type: value,
-        },
+    if (!curComponentId) return;
+
+    setType(value);
+
+    onChange?.({
+      type: 'showMessage',
+      config: {
+        type: value,
+        text,
       },
     });
   }
 
-  function messageTextChange(eventName: string, value: string) {
+  function messageTextChange(value: string) {
     if (!curComponentId) return;
 
-    updateComponentProps(curComponentId, {
-      [eventName]: {
-        ...curComponent?.props?.[eventName],
-        config: {
-          ...curComponent?.props?.[eventName]?.config,
-          text: value,
-        },
+    setText(value);
+
+    onChange?.({
+      type: 'showMessage',
+      config: {
+        type,
+        text: value,
       },
     });
   }
@@ -42,15 +61,15 @@ export function ShowMessage(props: { event: ComponentEvent }) {
         <div className="text-nowrap">类型：</div>
         <div>
           <Select
-            className="w-[10rem]"
+            className="w-[31.25rem]"
             options={[
               { label: '成功', value: 'success' },
               { label: '失败', value: 'error' },
             ]}
             onChange={(value) => {
-              messageTypeChange(event.name, value);
+              messageTypeChange(value);
             }}
-            value={curComponent?.props?.[event.name]?.config?.type}
+            value={type || 'success'}
           />
         </div>
       </div>
@@ -58,10 +77,11 @@ export function ShowMessage(props: { event: ComponentEvent }) {
         <div className="text-nowrap"> 文本：</div>
         <div>
           <Input
+            className="w-[31.25rem]"
             onChange={(e) => {
-              messageTextChange(event.name, e.target.value);
+              messageTextChange(e.target.value);
             }}
-            value={curComponent?.props?.[event.name]?.config?.text}
+            value={text || ''}
           />
         </div>
       </div>
