@@ -1,8 +1,8 @@
 import { useComponentConfigStore } from '../../stores/useComponentsConfigStore';
 import { Component, useComponetsStore } from '../../stores/useComponetsStore';
 import React, { MouseEventHandler, useState } from 'react';
-import HoverMask from '../HoverMask';
-import SelectedMask from '../SelectedMask';
+import HoverMask from './HoverMask';
+import SelectedMask from './SelectedMask';
 
 export function EditArea() {
   const { components, curComponentId, setCurComponentId } = useComponetsStore();

@@ -3,21 +3,21 @@ import { createPortal } from 'react-dom';
 import {
   getComponentById,
   useComponetsStore,
-} from '../../stores/useComponetsStore';
+} from '../../../stores/useComponetsStore';
+import { Dropdown, Popconfirm, Space } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
 
-interface HoverMaskProps {
+interface SelectedMaskProps {
+  portalWrapperClassName: string;
   containerClassName: string;
   componentId: number;
-  portalWrapperClassName: string;
 }
 
-function HoverMask({
+function SelectedMask({
   containerClassName,
   portalWrapperClassName,
   componentId,
-}: HoverMaskProps) {
-  const { components } = useComponetsStore();
-
+}: SelectedMaskProps) {
   const [position, setPosition] = useState({
     left: 0,
     top: 0,
@@ -26,6 +26,9 @@ function HoverMask({
     labelTop: 0,
     labelLeft: 0,
   });
+
+  const { components, curComponentId, deleteComponent, setCurComponentId } =
+    useComponetsStore();
 
   useEffect(() => {
     updatePosition();
@@ -56,14 +59,10 @@ function HoverMask({
       left: left - containerLeft + container.scrollTop,
       width,
       height,
-      labelLeft,
       labelTop,
+      labelLeft,
     });
   }
-
-  useEffect(() => {
-    updatePosition();
-  }, [components]);
 
   const el = useMemo(() => {
     return document.querySelector(`.${portalWrapperClassName}`)!;
@@ -72,6 +71,29 @@ function HoverMask({
   const curComponent = useMemo(() => {
     return getComponentById(componentId, components);
   }, [componentId]);
+
+  function handleDelete() {
+    deleteComponent(curComponentId!);
+    setCurComponentId(null);
+  }
+
+  // 处理删除后 高度问题
+  useEffect(() => {
+    updatePosition();
+  }, [components]);
+
+  // 获取父辈级component
+  const parentComponents = useMemo(() => {
+    const parentComponents = [];
+    let component = curComponent;
+
+    while (component?.parentId) {
+      component = getComponentById(component.parentId, components)!;
+      parentComponents.push(component);
+    }
+
+    return parentComponents;
+  }, [curComponent]);
 
   // 窗口缩放
   useEffect(() => {
@@ -91,9 +113,9 @@ function HoverMask({
         style={{
           left: position.left,
           top: position.top,
+          backgroundColor: 'rgba(0, 0, 255, 0.1)',
           width: position.width,
           height: position.height,
-          backgroundColor: 'rgba(0, 0, 255, 0.1)',
         }}
       />
       <div
@@ -102,16 +124,46 @@ function HoverMask({
           left: position.labelLeft,
           top: position.labelTop,
           display: !position.width || position.width < 10 ? 'none' : 'inline',
-          backgroundColor: 'blue',
         }}
       >
-        <div className="rounded-[0.25rem] text-white cursor-pointer whitespace-nowrap py-0 px-2">
-          {curComponent?.desc}
-        </div>
+        <Space>
+          <Dropdown
+            menu={{
+              items: parentComponents.map((item) => ({
+                key: item.id,
+                label: item.name,
+              })),
+              onClick: ({ key }) => {
+                setCurComponentId(+key);
+              },
+            }}
+            disabled={parentComponents.length === 0}
+          >
+            <div
+              className="rounded-[0.25rem] px-2 text-white cursor-pointer whitespace-nowrap"
+              style={{ backgroundColor: 'blue' }}
+            >
+              {curComponent?.desc}
+            </div>
+          </Dropdown>
+          {/* 不能删除page */}
+          {curComponentId !== 1 && (
+            <div className="px-2" style={{ backgroundColor: 'blue' }}>
+              <Popconfirm
+                title="确认删除？"
+                okText={'确认'}
+                cancelText={'取消'}
+                onConfirm={handleDelete}
+              >
+                <DeleteOutlined className="text-white" />
+              </Popconfirm>
+            </div>
+          )}
+        </Space>
       </div>
     </>,
     el,
   );
 }
 
-export default HoverMask;
+export default SelectedMask;
