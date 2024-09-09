@@ -40,28 +40,26 @@ export function ComponentAttr() {
   }
 
   return (
-    <div className="mt-4">
-      <Form
-        form={form}
-        onValuesChange={valueChange}
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 14 }}
-      >
-        <Form.Item label="组件id">
-          <Input value={curComponent.id} disabled />
+    <Form
+      form={form}
+      onValuesChange={valueChange}
+      labelCol={{ span: 8 }}
+      wrapperCol={{ span: 14 }}
+    >
+      <Form.Item label="组件id">
+        <Input value={curComponent.id} disabled />
+      </Form.Item>
+      <Form.Item label="组件名称">
+        <Input value={curComponent.name} disabled />
+      </Form.Item>
+      <Form.Item label="组件描述">
+        <Input value={curComponent.desc} disabled />
+      </Form.Item>
+      {componentConfig[curComponent.name]?.setter?.map((setter) => (
+        <Form.Item key={setter.name} name={setter.name} label={setter.label}>
+          {renderFormElememt(setter)}
         </Form.Item>
-        <Form.Item label="组件名称">
-          <Input value={curComponent.name} disabled />
-        </Form.Item>
-        <Form.Item label="组件描述">
-          <Input value={curComponent.desc} disabled />
-        </Form.Item>
-        {componentConfig[curComponent.name]?.setter?.map((setter) => (
-          <Form.Item key={setter.name} name={setter.name} label={setter.label}>
-            {renderFormElememt(setter)}
-          </Form.Item>
-        ))}
-      </Form>
-    </div>
+      ))}
+    </Form>
   );
 }
