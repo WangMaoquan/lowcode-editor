@@ -1,16 +1,20 @@
 import { create } from 'zustand';
-import Container from '../../materials/Container';
-import Button from '../../materials/Botton';
-import Page from '../../materials/Page';
+import DevContainer from '../../materials/Container/dev';
+import DevButton from '../../materials/Botton/dev';
+import DevPage from '../../materials/Page/dev';
+import ProdContainer from '../../materials/Container/prod';
+import ProdButton from '../../materials/Botton/prod';
+import ProdPage from '../../materials/Page/prod';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface ComponentConfig {
   name: string;
   defaultProps: Record<string, any>;
-  component: any;
   desc: string;
   setter?: ComponentSetter[];
   stylesSetter?: ComponentSetter[];
+  dev: any; // devComponent
+  prod: any; // prodComponent
 }
 
 // 展示组件有哪些配置
@@ -34,8 +38,9 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
     Container: {
       name: 'Container',
       defaultProps: {},
-      component: Container,
       desc: '容器',
+      dev: DevContainer,
+      prod: ProdContainer,
     },
     Button: {
       name: 'Button',
@@ -43,8 +48,9 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
         type: 'primary',
         text: '按钮',
       },
-      component: Button,
       desc: '按钮',
+      dev: DevButton,
+      prod: ProdButton,
       setter: [
         {
           name: 'type',
@@ -77,7 +83,8 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
     Page: {
       name: 'Page',
       defaultProps: {},
-      component: Page,
+      dev: DevPage,
+      prod: ProdPage,
       desc: '页面',
     },
   },

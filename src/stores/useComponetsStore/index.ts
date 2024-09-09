@@ -11,10 +11,13 @@ export interface Component {
   styles?: CSSProperties;
 }
 
+type Mode = 'edit' | 'preview';
+
 interface State {
   components: Component[];
   curComponentId?: number | null;
   curComponent?: Component | null;
+  mode: Mode;
 }
 
 interface Action {
@@ -23,6 +26,7 @@ interface Action {
   updateComponentProps: (componentId: number, props: object) => void;
   setCurComponentId: (componentId: number | null) => void;
   updateComponentStyles: (componentId: number, styles: CSSProperties) => void;
+  setMode: (mode: Mode) => void;
 }
 
 const resetFns = new Set<() => void>();
@@ -46,6 +50,7 @@ export const useComponetsStore = create<State & Action>((set, get) => {
     curComponent: null,
     curComponentId: null,
     components: [{ ...initComponent }],
+    mode: 'edit',
     addComponent: (component, parentId) =>
       set((state) => {
         if (parentId) {
@@ -121,6 +126,7 @@ export const useComponetsStore = create<State & Action>((set, get) => {
         }
         return { components: [...state.components] };
       }),
+    setMode: (mode) => set({ mode }),
   };
 });
 
