@@ -61,6 +61,10 @@ function HoverMask({
     });
   }
 
+  useEffect(() => {
+    updatePosition();
+  }, [components]);
+
   const el = useMemo(() => {
     return document.querySelector(`.${portalWrapperClassName}`)!;
   }, []);

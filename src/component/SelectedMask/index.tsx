@@ -4,7 +4,7 @@ import {
   getComponentById,
   useComponetsStore,
 } from '../../stores/useComponetsStore';
-import { Popconfirm, Space } from 'antd';
+import { Dropdown, Popconfirm, Space } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 
 interface SelectedMaskProps {
@@ -77,6 +77,24 @@ function SelectedMask({
     setCurComponentId(null);
   }
 
+  // 处理删除后 高度问题
+  useEffect(() => {
+    updatePosition();
+  }, [components]);
+
+  // 获取父辈级component
+  const parentComponents = useMemo(() => {
+    const parentComponents = [];
+    let component = curComponent;
+
+    while (component?.parentId) {
+      component = getComponentById(component.parentId, components)!;
+      parentComponents.push(component);
+    }
+
+    return parentComponents;
+  }, [curComponent]);
+
   return createPortal(
     <>
       <div
@@ -95,16 +113,31 @@ function SelectedMask({
           left: position.labelLeft,
           top: position.labelTop,
           display: !position.width || position.width < 10 ? 'none' : 'inline',
-          backgroundColor: 'blue',
         }}
       >
         <Space>
-          <div className="rounded-[0.25rem] px-2 text-white cursor-pointer whitespace-nowrap">
-            {curComponent?.name}
-          </div>
+          <Dropdown
+            menu={{
+              items: parentComponents.map((item) => ({
+                key: item.id,
+                label: item.name,
+              })),
+              onClick: ({ key }) => {
+                setCurComponentId(+key);
+              },
+            }}
+            disabled={parentComponents.length === 0}
+          >
+            <div
+              className="rounded-[0.25rem] px-2 text-white cursor-pointer whitespace-nowrap"
+              style={{ backgroundColor: 'blue' }}
+            >
+              {curComponent?.name}
+            </div>
+          </Dropdown>
           {/* 不能删除page */}
           {curComponentId !== 1 && (
-            <div className="px-2 bg-blue">
+            <div className="px-2" style={{ backgroundColor: 'blue' }}>
               <Popconfirm
                 title="确认删除？"
                 okText={'确认'}
