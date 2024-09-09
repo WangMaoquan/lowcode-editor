@@ -20,7 +20,7 @@ export function SettingArea() {
         block
         options={['属性', '样式', '事件']}
       />
-      <div>
+      <div className="p-4">
         {key === '属性' && <ComponentAttr />}
         {key === '样式' && <ComponentStyle />}
         {key === '事件' && <ComponentEvent />}
