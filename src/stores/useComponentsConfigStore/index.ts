@@ -9,6 +9,15 @@ export interface ComponentConfig {
   defaultProps: Record<string, any>;
   component: any;
   desc: string;
+  setter?: ComponentSetter[];
+}
+
+// 展示组件有哪些配置
+export interface ComponentSetter {
+  name: string;
+  label: string;
+  type: string;
+  [key: string]: any;
 }
 
 interface State {
@@ -35,6 +44,22 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
       },
       component: Button,
       desc: '按钮',
+      setter: [
+        {
+          name: 'type',
+          label: '按钮类型',
+          type: 'select',
+          options: [
+            { label: '主按钮', value: 'primary' },
+            { label: '次按钮', value: 'default' },
+          ],
+        },
+        {
+          name: 'text',
+          label: '文本',
+          type: 'input',
+        },
+      ],
     },
     Page: {
       name: 'Page',
